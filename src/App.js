@@ -1,23 +1,32 @@
-import logo from './logo.svg';
+import {  useEffect, useState } from 'react';
+import axios from 'axios';
+import SongForm from './components/SongForm';
+import Song from './components/Songs';
 import './App.css';
 
 function App() {
+    const [songs, setSongs] = useState([])
+
+  const getAllSongs = async () => {
+    try {
+      const { data } = await axios.get(process.env.REACT_APP_API_URL + "/songs")
+      setSongs(data.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getAllSongs()
+  }, [])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+          <SongForm />
+          <div className='songs_container' >
+            {songs.map((song) => (
+                    <Song song={song} key={song._id} />
+            ))}
+          </div>
     </div>
   );
 }
